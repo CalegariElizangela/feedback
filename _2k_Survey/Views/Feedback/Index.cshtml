@@ -1,0 +1,37 @@
+﻿@using _2k_Shared.Views
+@model IEnumerable<SurveyViewModel>
+@{
+    ViewData["Title"] = "Survey Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Feedbacks</h1>
+</div>
+<div class="survey">
+    <br />
+    @foreach (var survey in Model)
+    {
+
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                    <a href="@Url.Action("ShowSurvey", "Feedback", new{surveyId = survey.SurveyId, token = ViewBag.Token })" class="elements">
+                        <span>@survey.Name</span>
+                    </a>
+                </div>
+                @*<div class="col">
+                    @if (_2k_Survey.ResponseId == null)
+                    {
+                        <p>Create Token</p>
+                    }
+                    else {
+                        <p>Ansered</p>
+                    }
+                </div>*@
+            </div>
+        </div>
+
+        <a href="_2k_Survey.html"></a>
+        
+    }
+</div>
