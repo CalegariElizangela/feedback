@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace _2k_Shared.Components
 {
@@ -16,9 +17,11 @@ namespace _2k_Shared.Components
 
         public string GetHTML()
         {
-            if(SubComponents.Count > 0)
+            var buildDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            if (SubComponents.Count > 0)
                 return Template.Replace("{ContentRender}", SubComponents.Select(x => x.GetHTML()).Aggregate((first, second) => first + second))
-                    .Replace("{StyleRender}", File.ReadAllText(@"C:\Projects\2k.feedback\_2k.Shared\Content\survey.css"));
+                    .Replace("{StyleRender}", File.ReadAllText(buildDir + @"\Content\survey.css"));
 
             return Template.Replace("{ContentRender}", "").Replace("{StyleRender}", "");
         }

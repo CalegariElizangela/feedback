@@ -16,7 +16,7 @@ namespace _2k_Shared.Components
         public override string Template =>
         $@"<tr>
             <th class=""questionCol"">
-                {_question.Content}
+                {_question.Content} <span class=""fa fa-question-circle"">
             </th>
             {{ContentRender}}
         </tr>

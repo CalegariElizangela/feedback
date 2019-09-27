@@ -18,12 +18,12 @@ namespace _2k_Shared.Components
             $@"<style> {{StyleRender}} </style>
             <div class=""surveypage"">
                 <h1 class=""title"">
-                    <p>{_survey.Name} <img class=""logo"" src=""../../../Content/images/2k_.png""></p>
+                    <p>{_survey.Name}</p>
                 </h1>
                 <div class=""subTitle"">
                     <div><span>This survey takes 1-2 minutes to complete.</span></div>
                     <div><span>All feedback is for internal use only.</span></div>
-                    <div><p>Select the <span class=""glyphicon glyphicon-alert""></span> if you would like more context around the question.</p></div>
+                    <div><p>Select the <span class=""fa fa-question-circle""></span> if you would like more context around the question.</p></div>
                 </div>
                 <div class=""survey"">
                     <table class=""table table-striped"">
@@ -37,7 +37,7 @@ namespace _2k_Shared.Components
                     </div>
                 </div>
                 <div class=""sendbutton"">
-                    <button type=""button"" class=""btn btn-success"">Send Feedback</button>
+                    <button type=""button"" class=""btn btn-success"" onClick=""SendFeedback()"">Send Feedback</button>
                 </div>
             </div>
             ";

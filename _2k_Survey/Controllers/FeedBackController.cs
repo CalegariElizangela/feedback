@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using _2k_Survey.DTO;
 
 namespace _2k_Survey.Controllers
 {
@@ -33,6 +34,7 @@ namespace _2k_Survey.Controllers
 
             return View("Index", viewModel);
         }
+
         [AllowAnonymousByToken]
         public IActionResult ShowSurvey(string token, int surveyId)
         {
@@ -65,8 +67,8 @@ namespace _2k_Survey.Controllers
                 {
                     foreach (var option in question.Options)
                     {
-                        option.OptionName = "option_" + question.QuestionId;
-                        option.ResponseId = survey.SurveyItems.FirstOrDefault(w => w.GroupId == group.GroupId
+                        option.QuestionId = question.QuestionId;
+                        option.SurveyItemId = survey.SurveyItems.FirstOrDefault(w => w.GroupId == group.GroupId
                                             && w.QuestionId == question.QuestionId
                                             && w.QuestionOptionId == option.QuestionOptionId).SurveyItemId;
                     }
@@ -79,6 +81,12 @@ namespace _2k_Survey.Controllers
         public IActionResult Unathorized()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult SendFeedback([FromBody] List<FeedbackResultDTO> feedbackResult)
+        {
+            return View("ThankYouPage");
         }
     }
 }

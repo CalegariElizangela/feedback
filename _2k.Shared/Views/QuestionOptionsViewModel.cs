@@ -4,7 +4,7 @@
     {
         public int QuestionOptionId { get; set; }
         public string Content { get; set; }
-        public string OptionName { get; set; }
-        public int ResponseId { get; set; }
+        public int QuestionId { get; set; }
+        public int SurveyItemId { get; set; }
     }
 }

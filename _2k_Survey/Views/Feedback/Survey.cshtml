@@ -2,4 +2,37 @@
 @using _2k_Survey.Helpers
 @model SurveyViewModel
 
-@Html.GetSurvey(Model)
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+<img class="logo" src="~/images/2k_.png" width="129" />
+<form id="myForm">
+    @Html.GetSurvey(Model)
+</form>
+
+    <script language="javascript" type="text/javascript">
+
+    function SendFeedback()
+    {
+        var results = [];
+        var questionId, surveyItemId  = 0;
+
+        $("#myForm input[type=radio]:checked").each(function () {
+            questionId= this.name;
+            surveyItemId = this.id;
+            results.push({ questionId: questionId, surveyItemId: surveyItemId });
+        });
+
+
+        $.ajax({
+            type: "POST",
+            url: "@(Url.Action("SendFeedback", "Feedback"))",
+            data: JSON.stringify(results),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data)
+                { alert("Certo"); },
+            failure: function (errMsg)
+                { alert(errMsg); }
+        });
+    }
+
+    </script>

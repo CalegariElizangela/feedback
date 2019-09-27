@@ -13,7 +13,7 @@ namespace _2k_Shared.Components
 
         public override string Template =>
              $@"<th class=""optionCol"">
-                     <input type = ""radio"" class=""option"" value=""{_questionOption.QuestionOptionId}"" name=""{_questionOption.OptionName}"" />
+                     <input type = ""radio"" class=""option"" id=""{_questionOption.SurveyItemId}"" name=""{_questionOption.QuestionId}"" />
                 </th>
             ";
     }
