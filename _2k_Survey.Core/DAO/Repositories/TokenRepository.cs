@@ -15,6 +15,11 @@ namespace _2k_Survey.Core.DAO.Repositories
         }
 
         public Token GetToken(string token)
-            => _dbSet.Where(x => x.Value == token).FirstOrDefault();
+        {
+            return _dbSet
+                .Include(i => i.Related_Surveys).ThenInclude(i => i.Response)
+                .Include(i => i.Related_Surveys).ThenInclude(i => i.Survey)
+                .FirstOrDefault(f => f.Value == token);
+        }
     }
 }

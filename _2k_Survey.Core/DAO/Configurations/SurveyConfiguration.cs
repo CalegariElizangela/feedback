@@ -10,7 +10,6 @@ namespace _2k_Survey.Core.DAO.Configurations
         {
             builder.ToTable("Survey");
             builder.HasMany(x => x.Related_Surveys).WithOne(y => y.Survey).HasForeignKey(x => x.SurveyId);
-
             builder.HasMany(x => x.SurveyItems).WithOne(y => y.Survey).HasForeignKey(x => x.SurveyId);
         }
     }

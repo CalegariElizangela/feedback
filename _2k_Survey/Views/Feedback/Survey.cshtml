@@ -2,37 +2,48 @@
 @using _2k_Survey.Helpers
 @model SurveyViewModel
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+<link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
 <img class="logo" src="~/images/2k_.png" width="129" />
-<form id="myForm">
+<form id="surveyForm">
     @Html.GetSurvey(Model)
 </form>
 
-    <script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript">
+
+    window.onload = function () {
+        @if (ViewBag.Disabled != null && ViewBag.Disabled)
+        {
+            <text>
+            $('#surveyForm :input').attr('disabled', true);
+            </text>
+
+            @foreach (var item in Model.Answers)
+            {
+                <text>
+                $("#@item").prop("checked", true);
+                </text>
+            }
+        }
+    }
 
     function SendFeedback()
     {
         var results = [];
-        var questionId, surveyItemId  = 0;
 
-        $("#myForm input[type=radio]:checked").each(function () {
-            questionId= this.name;
-            surveyItemId = this.id;
-            results.push({ questionId: questionId, surveyItemId: surveyItemId });
+        $("#surveyForm input[type=radio]:checked").each(function () {
+            results.push(parseInt(this.id));
         });
 
+        var data = {
+            responseId: @Model.ResponseId,
+            feedbackResult: results
+        }
 
         $.ajax({
             type: "POST",
             url: "@(Url.Action("SendFeedback", "Feedback"))",
-            data: JSON.stringify(results),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (data)
-                { alert("Certo"); },
-            failure: function (errMsg)
-                { alert(errMsg); }
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8"
         });
     }
-
-    </script>
+</script>

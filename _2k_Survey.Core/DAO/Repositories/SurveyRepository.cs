@@ -1,5 +1,4 @@
-﻿using _2k_Survey.Core.DAO;
-using _2k_Survey.Core.DAO.Interfaces.Repositories;
+﻿using _2k_Survey.Core.DAO.Interfaces.Repositories;
 using _2k_Survey.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;

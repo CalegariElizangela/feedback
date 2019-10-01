@@ -1,11 +1,13 @@
-﻿using _2k_Survey.Attribute;
-using _2k_Shared.Views;
+﻿using _2k_Shared.Views;
+using _2k_Survey.Attribute;
 using _2k_Survey.Core.DAO.Interfaces.Repositories;
+using _2k_Survey.Core.Entities;
+using _2k_Survey.DTO;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using _2k_Survey.DTO;
 
 namespace _2k_Survey.Controllers
 {
@@ -13,22 +15,40 @@ namespace _2k_Survey.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ISurveyRepository _surveyRepository;
+        private readonly ITokenRepository _tokenRepository;
         private readonly IQuestionOptionRepository _questionOptionRepository;
+        private readonly IResponseRepository _responseRepository;
 
         public FeedBackController(IMapper mapper,
             ISurveyRepository surveyRepository,
-            IQuestionOptionRepository questionOptionRepository)
+            ITokenRepository tokenRepository,
+            IQuestionOptionRepository questionOptionRepository,
+            IResponseRepository responseRepository)
         {
             _mapper = mapper;
             _surveyRepository = surveyRepository;
+            _tokenRepository = tokenRepository;
             _questionOptionRepository = questionOptionRepository;
+            _responseRepository = responseRepository;
         }
 
         [AllowAnonymousByToken]
         public IActionResult Index(string token)
         {
-            var model = _surveyRepository.GetAllSurveysByToken(token);
-            var viewModel = _mapper.Map<List<SurveyViewModel>>(model);
+            var model = _tokenRepository.GetToken(token);
+
+            var viewModel = new List<SurveyViewModel>();
+
+            foreach (var survey in model.Related_Surveys)
+            {
+                viewModel.Add(new SurveyViewModel
+                {
+                    SurveyId = survey.SurveyId,
+                    ResponseId = survey.ResponseId,
+                    Name = survey.Survey.Name,
+                    Disabled = survey.Response.CreateDate.HasValue ? "disabled" : ""
+                });
+            }
 
             ViewBag.Token = token;
 
@@ -36,10 +56,18 @@ namespace _2k_Survey.Controllers
         }
 
         [AllowAnonymousByToken]
-        public IActionResult ShowSurvey(string token, int surveyId)
+        public IActionResult OpenEditSurvey(int surveyId, int responseId)
+        {
+            SurveyViewModel viewModel = GetSurveyData(surveyId, responseId);
+
+            return View("Survey", viewModel);
+        }
+
+        private SurveyViewModel GetSurveyData(int surveyId, int responseId)
         {
             var survey = _surveyRepository.GetSurveyById(surveyId);
             var viewModel = _mapper.Map<SurveyViewModel>(survey);
+            viewModel.ResponseId = responseId;
 
             viewModel.Groups = _mapper.Map<List<GroupViewModel>>(survey.SurveyItems
                 .OrderBy(o => o.GroupOrder)
@@ -75,6 +103,18 @@ namespace _2k_Survey.Controllers
                 }
             }
 
+            return viewModel;
+        }
+
+        [AllowAnonymousByToken]
+        public IActionResult OpenSurvey(int surveyId, int responseId)
+        {
+            SurveyViewModel viewModel = GetSurveyData(surveyId, responseId);
+
+            viewModel.Answers = _responseRepository.GetResponse(responseId).ResponseItems.Select(s => s.SurveyItemId).ToArray();
+
+            ViewBag.Disabled = true;
+
             return View("Survey", viewModel);
         }
 
@@ -84,9 +124,37 @@ namespace _2k_Survey.Controllers
         }
 
         [HttpPost]
-        public IActionResult SendFeedback([FromBody] List<FeedbackResultDTO> feedbackResult)
+        public IActionResult SendFeedback([FromBody] FeedbackResponseDTO feedbackResult)
         {
-            return View("ThankYouPage");
+            try
+            {
+                var response = _responseRepository.GetResponse(feedbackResult.ResponseId);
+                response.CreateDate = DateTime.Now;
+
+                foreach (var answer in feedbackResult.FeedbackResult)
+                {
+                    response.ResponseItems.Add(new ResponseItem
+                    {
+                        ResponseId = feedbackResult.ResponseId,
+                        SurveyItemId = answer,
+                        TextAnswer = ""
+                    });
+                }
+
+                _responseRepository.Update(response);
+
+                return Redirect("ThankYouPage");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu algum erro");
+            }
+        }
+
+        [AllowAnonymousByToken]
+        public IActionResult ThankYouPage()
+        {
+            return View();
         }
     }
 }

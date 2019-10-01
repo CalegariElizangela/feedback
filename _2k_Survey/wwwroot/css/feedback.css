@@ -1,0 +1,39 @@
+﻿.feedbackpage {
+    margin-top: 40px;
+}
+
+.title {
+    margin-bottom: 40px;
+}
+
+.survey {
+    margin-top: 30px;
+}
+
+.logo {
+    float: right;
+}
+
+.table th, .table td {
+    border-top: 0px !important;
+}
+
+.actioncol {
+    text-align: center;
+}
+
+.fa-eye {
+    color: white !important;
+}
+
+.action-button {
+    background-color: #ff0000;
+    border-color: #ff0000;
+    color: #fff;
+}
+
+    .action-button:hover {
+        color: #fff;
+        box-shadow: 0 0 0 1px #ff0000, 0 0 0 0.2rem rgba(255, 123, 255, 0.25);
+    }
+

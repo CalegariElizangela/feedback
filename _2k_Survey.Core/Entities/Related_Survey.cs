@@ -1,9 +1,4 @@
-﻿using _2k_Survey.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace _2k_Survey.Core.Entities
+﻿namespace _2k_Survey.Core.Entities
 {
     public class Related_Survey
     {
@@ -13,5 +8,6 @@ namespace _2k_Survey.Core.Entities
         public int SurveyId { get; set; }
         public virtual Token Token { get; set; }
         public virtual Survey Survey { get; set; }
+        public virtual Response Response { get; set; }
     }
 }

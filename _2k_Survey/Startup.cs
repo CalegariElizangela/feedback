@@ -52,6 +52,7 @@ namespace _2k_Survey
             services.AddScoped<ISurveyRepository, SurveyRepository>();
             services.AddScoped<IQuestionOptionRepository, QuestionOptionRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<IResponseRepository, ResponseRepository>();
             #endregion
 
             var mappingConfig = new MapperConfiguration(mc =>

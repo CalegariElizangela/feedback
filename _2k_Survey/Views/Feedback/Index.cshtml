@@ -4,34 +4,37 @@
     ViewData["Title"] = "Survey Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Feedbacks</h1>
-</div>
-<div class="survey">
-    <br />
-    @foreach (var survey in Model)
-    {
+<link href="~/css/feedback.css" rel="stylesheet" />
+<link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
 
-        <div class="container">
-            <div class="row">
-                <div class="col-4">
-                    <a href="@Url.Action("ShowSurvey", "Feedback", new{surveyId = survey.SurveyId, token = ViewBag.Token })" class="elements">
-                        <span>@survey.Name</span>
-                    </a>
-                </div>
-                @*<div class="col">
-                    @if (_2k_Survey.ResponseId == null)
-                    {
-                        <p>Create Token</p>
-                    }
-                    else {
-                        <p>Ansered</p>
-                    }
-                </div>*@
-            </div>
-        </div>
+<div class="feedbackpage">
+    <h1 class="title">
+        <p>Feedbacks <img class="logo" src="~/images/2k_.png" width="129" /></p>
+    </h1>
 
-        <a href="_2k_Survey.html"></a>
-        
-    }
+    <div class="surveys">
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Survey Name</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var survey in Model)
+                {
+                    <tr>
+                        <td>
+                            <span>@survey.Name</span>
+                        </td>
+                        <td class="actioncol">
+                            <a class="btn action-button btn-sm @survey.Disabled" href="@Url.Action("OpenEditSurvey", "Feedback", new { surveyId = survey.SurveyId, responseId = survey.ResponseId, token = ViewBag.Token })">
+                                <span class="fa fa-edit"></span>
+                            </a>
+                            <a class="btn action-button btn-sm" href="@Url.Action("OpenSurvey", "Feedback", new { surveyId = survey.SurveyId, responseId = survey.ResponseId, token = ViewBag.Token })">
+                                <span class="fa fa-eye"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

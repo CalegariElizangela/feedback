@@ -1,5 +1,4 @@
 ﻿using _2k_Shared.Views;
-using System.IO;
 using System.Linq;
 
 namespace _2k_Shared.Components

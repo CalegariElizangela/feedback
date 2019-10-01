@@ -12,6 +12,7 @@ namespace _2k_Survey.Core.DAO.Configurations
             builder.HasKey(x => x.RelatedSurveyId);
             builder.HasOne(x => x.Token).WithMany(y => y.Related_Surveys).HasForeignKey(x => x.TokenId);
             builder.HasOne(x => x.Survey).WithMany(y => y.Related_Surveys).HasForeignKey(x => x.SurveyId);
+            builder.HasOne(x => x.Response).WithMany(y => y.Related_Surveys).HasForeignKey(x => x.ResponseId);
         }
     }
 }

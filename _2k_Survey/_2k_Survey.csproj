@@ -6,6 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\css\feedback.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\feedback.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="wwwroot\images\2k_.png" />
     <None Include="wwwroot\images\logo.png" />
   </ItemGroup>
@@ -20,6 +27,15 @@
   <ItemGroup>
     <ProjectReference Include="..\_2k.Shared\_2k.Shared.csproj" />
     <ProjectReference Include="..\_2k_Survey.Core\_2k_Survey.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\lib\font-awesome\css\all.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\lib\font-awesome\css\all.min.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
