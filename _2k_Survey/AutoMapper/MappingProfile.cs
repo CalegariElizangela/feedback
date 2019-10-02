@@ -10,7 +10,10 @@ namespace _2k_Survey.AutoMapper
         public MappingProfile()
         {
             CreateMap<Survey, SurveyViewModel>()
-                .ForMember(x => x.Groups, op => op.MapFrom(y => y.SurveyItems.Select(w => w.Group).ToList()));
+                .ForMember(x => x.Groups, op => op.MapFrom(y => y.SurveyItems
+                    .OrderBy(o => o.GroupOrder)
+                    .Select(s => s.Group)
+                    .Distinct()));
 
             CreateMap<Group, GroupViewModel>();
             CreateMap<Question, QuestionViewModel>();

@@ -11,10 +11,10 @@
 <script language="javascript" type="text/javascript">
 
     window.onload = function () {
-        @if (ViewBag.Disabled != null && ViewBag.Disabled)
+        @if (Model.Disabled == "disabled")
         {
             <text>
-            $('#surveyForm :input').attr('disabled', true);
+            $("#surveyForm :input").attr("disabled", true);
             </text>
 
             @foreach (var item in Model.Answers)

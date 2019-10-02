@@ -4,6 +4,7 @@ namespace _2k_Shared.Views
 {
     public class SurveyViewModel
     {
+        public string Token { get; set; }
         public int SurveyId { get; set; }
         public int ResponseId { get; set; }
         public string Name { get; set; }

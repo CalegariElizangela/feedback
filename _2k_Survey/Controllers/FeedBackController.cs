@@ -37,113 +37,46 @@ namespace _2k_Survey.Controllers
         {
             var model = _tokenRepository.GetToken(token);
 
-            var viewModel = new List<SurveyViewModel>();
-
-            foreach (var survey in model.Related_Surveys)
-            {
-                viewModel.Add(new SurveyViewModel
-                {
-                    SurveyId = survey.SurveyId,
-                    ResponseId = survey.ResponseId,
-                    Name = survey.Survey.Name,
-                    Disabled = survey.Response.CreateDate.HasValue ? "disabled" : ""
-                });
-            }
-
-            ViewBag.Token = token;
-
-            return View("Index", viewModel);
+            return View("Index", CreateSurveyViewModel(model));
         }
 
         [AllowAnonymousByToken]
         public IActionResult OpenEditSurvey(int surveyId, int responseId)
         {
-            SurveyViewModel viewModel = GetSurveyData(surveyId, responseId);
-
-            return View("Survey", viewModel);
-        }
-
-        private SurveyViewModel GetSurveyData(int surveyId, int responseId)
-        {
-            var survey = _surveyRepository.GetSurveyById(surveyId);
-            var viewModel = _mapper.Map<SurveyViewModel>(survey);
-            viewModel.ResponseId = responseId;
-
-            viewModel.Groups = _mapper.Map<List<GroupViewModel>>(survey.SurveyItems
-                .OrderBy(o => o.GroupOrder)
-                .Select(s => s.Group)
-                .Distinct());
-
-            foreach (var group in viewModel.Groups)
-            {
-                group.Questions = _mapper.Map<List<QuestionViewModel>>(survey.SurveyItems
-                    .OrderBy(o => o.QuestionOrder)
-                    .Where(w => w.GroupId == group.GroupId)
-                    .Select(s => s.Question)
-                    .Distinct());
-
-                foreach (var question in group.Questions)
-                    question.Options = _mapper.Map<List<QuestionOptionsViewModel>>(survey.SurveyItems
-                        .OrderBy(o => o.QuestionOptionOrder)
-                        .Where(w => w.QuestionId == question.QuestionId)
-                        .Select(s => s.QuestionOption)
-                        .Distinct());
-
-                group.OptionsTitle.AddRange(group.Questions.FirstOrDefault().Options.Select(s => s.Content));
-
-                foreach (var question in group.Questions)
-                {
-                    foreach (var option in question.Options)
-                    {
-                        option.QuestionId = question.QuestionId;
-                        option.SurveyItemId = survey.SurveyItems.FirstOrDefault(w => w.GroupId == group.GroupId
-                                            && w.QuestionId == question.QuestionId
-                                            && w.QuestionOptionId == option.QuestionOptionId).SurveyItemId;
-                    }
-                }
-            }
-
-            return viewModel;
+            return View("Survey", GetSurveyData(surveyId, responseId));
         }
 
         [AllowAnonymousByToken]
-        public IActionResult OpenSurvey(int surveyId, int responseId)
+        public IActionResult OpenReadSurvey(int surveyId, int responseId)
         {
             SurveyViewModel viewModel = GetSurveyData(surveyId, responseId);
 
             viewModel.Answers = _responseRepository.GetResponse(responseId).ResponseItems.Select(s => s.SurveyItemId).ToArray();
-
-            ViewBag.Disabled = true;
+            viewModel.Disabled = "disabled";
 
             return View("Survey", viewModel);
         }
 
-        public IActionResult Unathorized()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public IActionResult SendFeedback([FromBody] FeedbackResponseDTO feedbackResult)
+        public IActionResult SendFeedback([FromBody] FeedbackResponseDTO result)
         {
             try
             {
-                var response = _responseRepository.GetResponse(feedbackResult.ResponseId);
+                var response = _responseRepository.GetResponse(result.ResponseId);
                 response.CreateDate = DateTime.Now;
 
-                foreach (var answer in feedbackResult.FeedbackResult)
+                foreach (var answer in result.FeedbackResult)
                 {
                     response.ResponseItems.Add(new ResponseItem
                     {
-                        ResponseId = feedbackResult.ResponseId,
-                        SurveyItemId = answer,
-                        TextAnswer = ""
+                        ResponseId = result.ResponseId,
+                        SurveyItemId = answer
                     });
                 }
 
                 _responseRepository.Update(response);
 
-                return Redirect("ThankYouPage");
+                return View("ThankYou");
             }
             catch (Exception ex)
             {
@@ -152,9 +85,72 @@ namespace _2k_Survey.Controllers
         }
 
         [AllowAnonymousByToken]
-        public IActionResult ThankYouPage()
+        public IActionResult ThankYou()
         {
             return View();
         }
+
+        public IActionResult Unathorized()
+        {
+            return View();
+        }
+
+        #region .:Private:.
+        private SurveyViewModel GetSurveyData(int surveyId, int responseId)
+        {
+            var survey = _surveyRepository.GetSurveyById(surveyId);
+
+            var viewModel = _mapper.Map<SurveyViewModel>(survey);
+            viewModel.ResponseId = responseId;
+
+            foreach (var group in viewModel.Groups)
+            {
+                group.Questions = _mapper.Map<List<QuestionViewModel>>(survey.SurveyItems
+                    .Where(w => w.GroupId == group.GroupId)
+                    .OrderBy(o => o.QuestionOrder)
+                    .Select(s => s.Question)
+                    .Distinct());
+
+                foreach (var question in group.Questions)
+                {
+                    question.Options = _mapper.Map<List<QuestionOptionsViewModel>>(survey.SurveyItems
+                        .Where(w => w.QuestionId == question.QuestionId)
+                        .OrderBy(o => o.QuestionOptionOrder)
+                        .Select(s => s.QuestionOption)
+                        .Distinct());
+
+                    foreach (var option in question.Options)
+                    {
+                        option.QuestionId = question.QuestionId;
+                        option.SurveyItemId = survey.SurveyItems.FirstOrDefault(w => w.GroupId == group.GroupId
+                                            && w.QuestionId == question.QuestionId
+                                            && w.QuestionOptionId == option.QuestionOptionId).SurveyItemId;
+                    }
+                }
+                group.OptionsTitle.AddRange(group.Questions.FirstOrDefault().Options.Select(s => s.Content));
+            }
+
+            return viewModel;
+        }
+
+        private static List<SurveyViewModel> CreateSurveyViewModel(Token model)
+        {
+            var viewModel = new List<SurveyViewModel>();
+
+            foreach (var survey in model.Related_Surveys)
+            {
+                viewModel.Add(new SurveyViewModel
+                {
+                    Token = survey.Token.Value,
+                    SurveyId = survey.SurveyId,
+                    ResponseId = survey.ResponseId,
+                    Name = survey.Survey.Name,
+                    Disabled = survey.Response.CreateDate.HasValue ? "disabled" : ""
+                });
+            }
+
+            return viewModel;
+        }
+        #endregion
     }
 }

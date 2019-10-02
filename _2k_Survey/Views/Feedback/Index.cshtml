@@ -25,10 +25,10 @@
                             <span>@survey.Name</span>
                         </td>
                         <td class="actioncol">
-                            <a class="btn action-button btn-sm @survey.Disabled" href="@Url.Action("OpenEditSurvey", "Feedback", new { surveyId = survey.SurveyId, responseId = survey.ResponseId, token = ViewBag.Token })">
+                            <a class="btn action-button btn-sm @survey.Disabled" href="@Url.Action("OpenEditSurvey", "Feedback", new { surveyId = survey.SurveyId, responseId = survey.ResponseId, token = survey.Token })">
                                 <span class="fa fa-edit"></span>
                             </a>
-                            <a class="btn action-button btn-sm" href="@Url.Action("OpenSurvey", "Feedback", new { surveyId = survey.SurveyId, responseId = survey.ResponseId, token = ViewBag.Token })">
+                            <a class="btn action-button btn-sm" href="@Url.Action("OpenReadSurvey", "Feedback", new { surveyId = survey.SurveyId, responseId = survey.ResponseId, token = survey.Token })">
                                 <span class="fa fa-eye"></span>
                             </a>
                         </td>
